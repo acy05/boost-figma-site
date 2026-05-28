@@ -6,32 +6,51 @@ import "./styles.css";
 const DESKTOP_WIDTH = 1440;
 const MOBILE_WIDTH = 375;
 const MOBILE_BREAKPOINT = 640;
+const APP_BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+function withBase(path: string) {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${APP_BASE}${normalizedPath}` || "/";
+}
+
+function routeHref(href: string) {
+  if (/^(https?:)?\/\//.test(href) || href.startsWith("mailto:") || href.startsWith("#")) return href;
+  return withBase(href);
+}
+
+function currentRoutePath() {
+  let path = window.location.pathname.replace(/\/$/, "") || "/";
+  if (APP_BASE && (path === APP_BASE || path.startsWith(`${APP_BASE}/`))) {
+    path = path.slice(APP_BASE.length) || "/";
+  }
+  return path;
+}
 
 const assets = {
-  homeHero: "/assets/home-hero.jpg",
-  homeCity: "/assets/home-city.jpg",
-  homeMeeting: "/assets/home-meeting.jpg",
-  homeRoad: "/assets/home-road.jpg",
-  homeTeam: "/assets/home-team.jpg",
-  innerHeroBase: "/assets/inner-hero-base.jpg",
-  innerHero: "/assets/inner-hero-texture.jpg",
-  serviceHeroMobile: "/assets/service-hero-mobile.jpg",
-  companyHeroMobile: "/assets/company-hero-mobile.jpg",
-  newsHeroMobile: "/assets/news-hero-mobile.jpg",
-  newsDetailHeroMobile: "/assets/news-detail-hero-mobile.jpg",
-  contactHeroMobile: "/assets/contact-hero-mobile.jpg",
-  privacyHeroMobile: "/assets/privacy-hero-mobile.png",
-  serviceMain: "/assets/service-main.jpg",
-  serviceFeature1: "/assets/service-feature-1.jpg",
-  serviceFeature2: "/assets/service-feature-2.jpg",
-  serviceFeature3: "/assets/service-feature-3.jpg",
-  companyMission: "/assets/company-mission.jpg",
-  companyPresident: "/assets/company-president.jpg",
-  companyExec1: "/assets/company-exec-1.jpg",
-  companyExec2: "/assets/company-exec-2.jpg",
-  companyExec3: "/assets/company-exec-3.jpg",
-  newsThumb: "/assets/news-thumb.jpg",
-  newsDetail: "/assets/news-detail.jpg",
+  homeHero: withBase("/assets/home-hero.jpg"),
+  homeCity: withBase("/assets/home-city.jpg"),
+  homeMeeting: withBase("/assets/home-meeting.jpg"),
+  homeRoad: withBase("/assets/home-road.jpg"),
+  homeTeam: withBase("/assets/home-team.jpg"),
+  innerHeroBase: withBase("/assets/inner-hero-base.jpg"),
+  innerHero: withBase("/assets/inner-hero-texture.jpg"),
+  serviceHeroMobile: withBase("/assets/service-hero-mobile.jpg"),
+  companyHeroMobile: withBase("/assets/company-hero-mobile.jpg"),
+  newsHeroMobile: withBase("/assets/news-hero-mobile.jpg"),
+  newsDetailHeroMobile: withBase("/assets/news-detail-hero-mobile.jpg"),
+  contactHeroMobile: withBase("/assets/contact-hero-mobile.jpg"),
+  privacyHeroMobile: withBase("/assets/privacy-hero-mobile.png"),
+  serviceMain: withBase("/assets/service-main.jpg"),
+  serviceFeature1: withBase("/assets/service-feature-1.jpg"),
+  serviceFeature2: withBase("/assets/service-feature-2.jpg"),
+  serviceFeature3: withBase("/assets/service-feature-3.jpg"),
+  companyMission: withBase("/assets/company-mission.jpg"),
+  companyPresident: withBase("/assets/company-president.jpg"),
+  companyExec1: withBase("/assets/company-exec-1.jpg"),
+  companyExec2: withBase("/assets/company-exec-2.jpg"),
+  companyExec3: withBase("/assets/company-exec-3.jpg"),
+  newsThumb: withBase("/assets/news-thumb.jpg"),
+  newsDetail: withBase("/assets/news-detail.jpg"),
 };
 
 type NavItem = {
@@ -67,7 +86,7 @@ const newsItems = Array.from({ length: 5 }, (_, index) => ({
 
 function Logo() {
   return (
-    <a className="logo" href="/">
+    <a className="logo" href={routeHref("/")}>
       BOOST
     </a>
   );
@@ -79,7 +98,7 @@ function Header() {
       <Logo />
       <nav aria-label="Global navigation" className="nav">
         {navItems.map((item) => (
-          <a href={item.href} key={item.href}>
+          <a href={routeHref(item.href)} key={item.href}>
             {item.label}
           </a>
         ))}
@@ -91,13 +110,13 @@ function Header() {
 function SocialRail() {
   return (
     <div aria-label="Social links" className="social-rail">
-      <a href="/" aria-label="Instagram">
+      <a href={routeHref("/")} aria-label="Instagram">
         <Instagram size={23} strokeWidth={1.7} />
       </a>
-      <a href="/" aria-label="Twitter">
+      <a href={routeHref("/")} aria-label="Twitter">
         <Twitter size={23} strokeWidth={1.7} />
       </a>
-      <a href="/" aria-label="Facebook">
+      <a href={routeHref("/")} aria-label="Facebook">
         <Facebook size={23} strokeWidth={1.7} />
       </a>
     </div>
@@ -115,7 +134,7 @@ function ScrollHint() {
 
 function SkewButton({ children, href, dark = false }: { children: React.ReactNode; href: string; dark?: boolean }) {
   return (
-    <a className={dark ? "skew-button skew-button-dark" : "skew-button"} href={href}>
+    <a className={dark ? "skew-button skew-button-dark" : "skew-button"} href={routeHref(href)}>
       <span>{children}</span>
     </a>
   );
@@ -158,14 +177,14 @@ function Footer() {
         </div>
         <nav className="footer-nav" aria-label="Footer navigation">
           {navItems.map((item) => (
-            <a href={item.href} key={item.href}>
+            <a href={routeHref(item.href)} key={item.href}>
               {item.label}
             </a>
           ))}
         </nav>
         <div className="footer-line" />
         <Logo />
-        <a className="footer-privacy" href="/privacy">
+        <a className="footer-privacy" href={routeHref("/privacy")}>
           PRIVACY POLICY
         </a>
         <p className="footer-copyright">©2022 BOOST INC.</p>
@@ -302,7 +321,7 @@ function HomePage() {
         </div>
         <div className="home-news-list">
           {["PRESS", "MEDIA", "MEDIA", "MEDIA"].map((category, index) => (
-            <a className="home-news-row" href="/news/detail" key={`${category}-${index}`}>
+            <a className="home-news-row" href={routeHref("/news/detail")} key={`${category}-${index}`}>
               <span>
                 <strong>2022.01.04</strong>
                 <em>{category}</em>
@@ -438,7 +457,7 @@ function CompanyPage() {
 
 function NewsCard({ item }: { item: (typeof newsItems)[number] }) {
   return (
-    <a className="news-card" href="/news/detail">
+    <a className="news-card" href={routeHref("/news/detail")}>
       <img alt="" src={assets.newsThumb} />
       <div>
         <h2>{item.title}</h2>
@@ -460,11 +479,11 @@ function NewsPage() {
         ))}
         <div className="pagination" aria-label="Pagination">
           {[1, 2, 3, 4].map((page) => (
-            <a className={page === 1 ? "active" : ""} href="/news" key={page}>
+            <a className={page === 1 ? "active" : ""} href={routeHref("/news")} key={page}>
               {page}
             </a>
           ))}
-          <a href="/news">次へ</a>
+          <a href={routeHref("/news")}>次へ</a>
         </div>
       </section>
     </PageShell>
@@ -486,7 +505,7 @@ function NewsDetailPage() {
         <p>
           ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。
         </p>
-        <a className="black-button" href="/news">
+        <a className="black-button" href={routeHref("/news")}>
           一覧に戻る
         </a>
       </article>
@@ -570,7 +589,7 @@ type MobilePageProps = {
 
 function MobileLogo({ light = false }: { light?: boolean }) {
   return (
-    <a className={light ? "mobile-logo mobile-logo-light" : "mobile-logo"} href="/">
+    <a className={light ? "mobile-logo mobile-logo-light" : "mobile-logo"} href={routeHref("/")}>
       BOOST
     </a>
   );
@@ -581,7 +600,7 @@ function MobileMenuButton({ onClick, close = false }: { onClick: () => void; clo
     <a
       aria-label={close ? "Close menu" : "Open menu"}
       className="mobile-menu-button"
-      href={close ? "/" : "/menu"}
+      href={routeHref(close ? "/" : "/menu")}
       onClick={(event) => {
         event.preventDefault();
         onClick();
@@ -603,7 +622,7 @@ function MobileHeader({ onOpenMenu, lightLogo = false }: MobilePageProps & { lig
 
 function MobileSkewButton({ children, href, dark = false }: { children: React.ReactNode; href: string; dark?: boolean }) {
   return (
-    <a className={dark ? "mobile-skew-button mobile-skew-button-dark" : "mobile-skew-button"} href={href}>
+    <a className={dark ? "mobile-skew-button mobile-skew-button-dark" : "mobile-skew-button"} href={routeHref(href)}>
       <span>{children}</span>
     </a>
   );
@@ -619,7 +638,7 @@ function MobileFooter() {
       <MobileSkewButton href="/contact">VIEW MORE</MobileSkewButton>
       <nav className="mobile-footer-nav" aria-label="Footer navigation">
         {navItems.map((item) => (
-          <a href={item.href} key={item.href}>
+          <a href={routeHref(item.href)} key={item.href}>
             {item.label}
           </a>
         ))}
@@ -628,7 +647,7 @@ function MobileFooter() {
         <ArrowUp size={34} strokeWidth={1.5} />
       </a>
       <MobileLogo light />
-      <a className="mobile-footer-privacy" href="/privacy">
+      <a className="mobile-footer-privacy" href={routeHref("/privacy")}>
         PRIVACY POLICY
       </a>
       <p className="mobile-footer-copyright">©2022 BOOST INC.</p>
@@ -661,22 +680,22 @@ function MobileMenuPage({ onClose }: { onClose: () => void }) {
       <MobileLogo light />
       <nav className="mobile-menu-nav" aria-label="Mobile navigation">
         {navItems.map((item, index) => (
-          <a className={index === 0 ? "active" : ""} href={item.href} key={item.href}>
+          <a className={index === 0 ? "active" : ""} href={routeHref(item.href)} key={item.href}>
             {item.label}
           </a>
         ))}
       </nav>
-      <a className="mobile-menu-privacy" href="/privacy">
+      <a className="mobile-menu-privacy" href={routeHref("/privacy")}>
         PRIVACY POLICY
       </a>
       <div aria-label="Social links" className="mobile-menu-social">
-        <a href="/" aria-label="Instagram">
+        <a href={routeHref("/")} aria-label="Instagram">
           <Instagram size={23} strokeWidth={1.7} />
         </a>
-        <a href="/" aria-label="Twitter">
+        <a href={routeHref("/")} aria-label="Twitter">
           <Twitter size={23} strokeWidth={1.7} />
         </a>
-        <a href="/" aria-label="Facebook">
+        <a href={routeHref("/")} aria-label="Facebook">
           <Facebook size={23} strokeWidth={1.7} />
         </a>
       </div>
@@ -810,7 +829,7 @@ function MobileHomePage({ onOpenMenu }: MobilePageProps) {
         <h2>NEWS</h2>
         <div className="mobile-home-news-list">
           {["PRESS", "MEDIA", "MEDIA", "MEDIA"].map((category, index) => (
-            <a className="mobile-home-news-row" href="/news/detail" key={`${category}-${index}`}>
+            <a className="mobile-home-news-row" href={routeHref("/news/detail")} key={`${category}-${index}`}>
               <span>
                 <strong>2022.01.04</strong>
                 <em>{category}</em>
@@ -964,7 +983,7 @@ function MobileCompanyPage({ onOpenMenu }: MobilePageProps) {
 
 function MobileNewsListCard({ item }: { item: (typeof newsItems)[number] }) {
   return (
-    <a className="mobile-news-list-card" href="/news/detail">
+    <a className="mobile-news-list-card" href={routeHref("/news/detail")}>
       <img alt="" src={assets.newsThumb} />
       <div>
         <h2>{item.title}</h2>
@@ -988,11 +1007,11 @@ function MobileNewsPage({ onOpenMenu }: MobilePageProps) {
         </div>
         <div className="mobile-pagination" aria-label="Pagination">
           {[1, 2, 3, 4].map((page) => (
-            <a className={page === 1 ? "active" : ""} href="/news" key={page}>
+            <a className={page === 1 ? "active" : ""} href={routeHref("/news")} key={page}>
               {page}
             </a>
           ))}
-          <a className="next" href="/news">
+          <a className="next" href={routeHref("/news")}>
             次へ
           </a>
         </div>
@@ -1016,7 +1035,7 @@ function MobileNewsDetailPage({ onOpenMenu }: MobilePageProps) {
         <p>
           ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。ここに記事が入ります。
         </p>
-        <a className="mobile-black-button" href="/news">
+        <a className="mobile-black-button" href={routeHref("/news")}>
           一覧に戻る
         </a>
       </article>
@@ -1094,7 +1113,7 @@ function MobilePrivacyPage({ onOpenMenu }: MobilePageProps) {
 }
 
 function App() {
-  const path = window.location.pathname.replace(/\/$/, "") || "/";
+  const path = currentRoutePath();
   const [viewportWidth, setViewportWidth] = React.useState(() => window.innerWidth);
   const [canvasHeight, setCanvasHeight] = React.useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
@@ -1134,7 +1153,7 @@ function App() {
 
   let page: React.ReactNode;
   if (isMobile && isMobileMenuOpen) page = <MobileMenuPage onClose={() => setIsMobileMenuOpen(false)} />;
-  else if (isMobile && path === "/menu") page = <MobileMenuPage onClose={() => window.history.length > 1 ? window.history.back() : window.location.assign("/")} />;
+  else if (isMobile && path === "/menu") page = <MobileMenuPage onClose={() => window.history.length > 1 ? window.history.back() : window.location.assign(routeHref("/"))} />;
   else if (isMobile && path === "/service") page = <MobileServicePage onOpenMenu={() => setIsMobileMenuOpen(true)} />;
   else if (isMobile && path === "/company") page = <MobileCompanyPage onOpenMenu={() => setIsMobileMenuOpen(true)} />;
   else if (isMobile && path === "/news") page = <MobileNewsPage onOpenMenu={() => setIsMobileMenuOpen(true)} />;
